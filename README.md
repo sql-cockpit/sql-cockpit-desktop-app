@@ -1,6 +1,6 @@
 # SQL Cockpit App — desktop release test
 
-Minimal Electron + React + TypeScript shell for testing the website's public GitHub Releases feed. **Not production-ready. This placeholder does not connect to databases.** Windows and Mac share the version in `package.json`.
+Minimal Electron + React + TypeScript shell for testing the website's public GitHub Releases feed. **Not production-ready. This placeholder does not connect to databases.** Windows, Mac and Linux share the version in `package.json`.
 
 ## Development
 
@@ -25,42 +25,47 @@ The smoke test opens a hidden Electron window, verifies React rendering and the 
 
 On Windows: `npm run package:win` builds the x64 NSIS installer.
 On Mac: `npm run package:mac` builds Apple Silicon and Intel DMGs.
+On Linux: `npm run package:linux` builds an x64 AppImage. The CI smoke test uses Xvfb and a properly permissioned Chromium sandbox helper; it does not disable the application sandbox.
 Generated `release/`, `dist/`, `dist-electron/` and dependencies are ignored by Git. Builds currently use Electron's default icon.
 
 ## Publishing
 
-The `Desktop build and release` GitHub Actions workflow validates and builds on main/PRs. Pushing a stable version tag builds Windows x64 and Mac arm64/x64, then a separate publication job creates one draft with all assets and publishes it as a stable latest release only after all builds succeed. Builds have read-only repository permissions; only the publication job receives `contents: write` via `GITHUB_TOKEN`. No personal token, npm publication or app-store upload is required.
+The `Desktop build and release` GitHub Actions workflow validates and builds on main/PRs. Pushing a stable version tag builds Windows x64, Mac arm64/x64 and Linux x64, then a separate publication job creates one draft with all assets and publishes it as a stable latest release only after all builds succeed. Builds have read-only repository permissions; only the publication job receives `contents: write` via `GITHUB_TOKEN`. No personal token, npm publication or app-store upload is required.
 
-Initial tag: `v0.0.1`. Test installers:
+Initial tag: `v0.0.1` (Windows/Mac only). Linux joins the shared release in `v0.0.2`. Current test installers:
 
-- `SQL-Cockpit-App-0.0.1-win-x64.exe`
-- `SQL-Cockpit-App-0.0.1-mac-arm64.dmg`
-- `SQL-Cockpit-App-0.0.1-mac-x64.dmg`
+- `SQL-Cockpit-App-0.0.2-win-x64.exe`
+- `SQL-Cockpit-App-0.0.2-mac-arm64.dmg`
+- `SQL-Cockpit-App-0.0.2-mac-x64.dmg`
+
+- `SQL-Cockpit-App-0.0.2-linux-x64.AppImage`
+
+The AppImage targets Linux x64. Mark it executable (`chmod +x <filename>`) before running it on a compatible desktop system. Some distributions require FUSE support. No ARM Linux installer is provided yet.
 
 A SHA256SUMS.txt asset records installer hashes. Release notes live in `releases/<tag>.md`.
 
 For the next release:
 
 ```sh
-npm version 0.0.2 --no-git-tag-version
-# Make a visible test change and add releases/v0.0.2.md.
+npm version 0.0.3 --no-git-tag-version
+# Make a visible test change and add releases/v0.0.3.md.
 npm test
 npm run build
 npm run smoke
 git add package.json package-lock.json src releases
-git commit -m "Prepare desktop test release 0.0.2"
+git commit -m "Prepare desktop test release 0.0.3"
 git push origin main
-git tag v0.0.2
-git push origin v0.0.2
+git tag v0.0.3
+git push origin v0.0.3
 ```
 
 Never move an existing published tag. If a build fails, fix it before publication and rerun using GitHub Actions. If publication created a draft and failed, inspect that draft and assets before retrying; the workflow intentionally does not overwrite an existing release.
 
-The website uses `/repos/sql-cockpit/sql-cockpit-desktop-app/releases/latest` and `/releases`. Its feed excludes drafts/prereleases and caches results for 15 minutes. After v0.0.2, verify the latest card is 0.0.2 and 0.0.1 remains in history.
+The website uses `/repos/sql-cockpit/sql-cockpit-desktop-app/releases/latest` and `/releases`. Its feed excludes drafts/prereleases and caches results for 15 minutes. After v0.0.3, verify the latest card is 0.0.3 and earlier releases remain in history.
 
 ## Signing and production readiness
 
-**Windows is unsigned. Mac is ad-hoc signed, without Developer ID or notarization.** Ad-hoc signing permits packaging; it is not publisher identity verification. Operating systems may block or warn on these installers. This workflow never invents credentials and does not claim production signing.
+**Windows and Linux are unsigned. Mac is ad-hoc signed, without Developer ID or notarization.** Ad-hoc signing permits packaging; it is not publisher identity verification. Operating systems may block or warn on these installers. This workflow never invents credentials and does not claim production signing.
 
 Before production, configure real Windows Authenticode credentials (or a supported signing service), enable executable signing/editing, and configure Apple Developer ID Application signing plus notarization credentials. Use encrypted GitHub secrets for `CSC_LINK`, `CSC_KEY_PASSWORD`/Windows equivalents and Apple notarization settings supported by electron-builder. Restore hardened runtime and suitable entitlements; validate signing and notarization on built artifacts. Adjust release notes and UI only after verification. Do not commit certificates, private keys or tokens. See https://www.electron.build/code-signing and https://www.electron.build/mac.
 

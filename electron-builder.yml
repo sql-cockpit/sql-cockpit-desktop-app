@@ -27,4 +27,10 @@ mac:
   hardenedRuntime: false
   notarize: false
   artifactName: SQL-Cockpit-App-${version}-mac-${arch}.${ext}
+linux:
+  target:
+    - target: AppImage
+      arch: [x64]
+  category: Development
+  artifactName: SQL-Cockpit-App-${version}-linux-${arch}.${ext}
 publish: null
