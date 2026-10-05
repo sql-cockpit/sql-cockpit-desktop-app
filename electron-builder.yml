@@ -1,0 +1,30 @@
+appId: com.sqlcockpit.desktop
+productName: SQL Cockpit App
+asar: true
+directories:
+  output: release
+files:
+  - dist/**/*
+  - dist-electron/**/*
+  - package.json
+artifactName: SQL-Cockpit-App-${version}-${os}-${arch}.${ext}
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  artifactName: SQL-Cockpit-App-${version}-win-${arch}.${ext}
+  signAndEditExecutable: false
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+mac:
+  target:
+    - target: dmg
+      arch: [arm64, x64]
+  category: public.app-category.developer-tools
+  identity: '-'
+  hardenedRuntime: false
+  notarize: false
+  artifactName: SQL-Cockpit-App-${version}-mac-${arch}.${ext}
+publish: null
