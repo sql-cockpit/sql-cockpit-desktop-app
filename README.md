@@ -38,7 +38,7 @@ Initial tag: `v0.0.1` (Windows/Mac only). Linux joins the shared release in `v0.
 - `SQL-Cockpit-App-0.0.2-mac-arm64.dmg`
 - `SQL-Cockpit-App-0.0.2-mac-x64.dmg`
 
-- `SQL-Cockpit-App-0.0.2-linux-x64.AppImage`
+- `SQL-Cockpit-App-0.0.2-linux-x86_64.AppImage`
 
 The AppImage targets Linux x64. Mark it executable (`chmod +x <filename>`) before running it on a compatible desktop system. Some distributions require FUSE support. No ARM Linux installer is provided yet.
 

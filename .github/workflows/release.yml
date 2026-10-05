@@ -93,4 +93,4 @@ jobs:
         run: |
           gh api "repos/$GITHUB_REPOSITORY/releases/latest" > /tmp/latest.json
           gh api "repos/$GITHUB_REPOSITORY/releases" > /tmp/history.json
-          node --input-type=module -e 'import fs from "node:fs"; const r=JSON.parse(fs.readFileSync("/tmp/latest.json")); const h=JSON.parse(fs.readFileSync("/tmp/history.json")); const expected=["win-x64.exe","mac-arm64.dmg","mac-x64.dmg","linux-x64.AppImage"]; if(r.tag_name!==process.env.RELEASE_TAG||r.draft||r.prerelease||!h.some(x=>x.id===r.id)||!expected.every(s=>r.assets.some(a=>a.name.endsWith(s)&&a.state==="uploaded"))) process.exit(1); console.log(r.html_url);'
+          node --input-type=module -e 'import fs from "node:fs"; const r=JSON.parse(fs.readFileSync("/tmp/latest.json")); const h=JSON.parse(fs.readFileSync("/tmp/history.json")); const expected=["win-x64.exe","mac-arm64.dmg","mac-x64.dmg","linux-x86_64.AppImage"]; if(r.tag_name!==process.env.RELEASE_TAG||r.draft||r.prerelease||!h.some(x=>x.id===r.id)||!expected.every(s=>r.assets.some(a=>a.name.endsWith(s)&&a.state==="uploaded"))) process.exit(1); console.log(r.html_url);'
